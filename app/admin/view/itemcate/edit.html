@@ -1,0 +1,174 @@
+<form class="layui-form model-form" action="">
+	<input name="id" id="id" type="hidden" value="{$info.id|default=0}">
+	<input name="pid" id="pid" type="hidden" value="{$info.pid|default=0}">
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">栏目名称：</label>
+			<div class="layui-input-inline">
+				<input name="name" value="{$info.name|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入栏目名称" class="layui-input pinyin" type="text">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">所属站点：</label>
+			<div class="layui-input-inline">
+<!--				{common:select param="item_id|1|所属站点|name|id" data="$itemList" value="isset($info['item_id']) ? $info['item_id'] : 0"}-->
+<!--				common 开始 -->
+				<select name="item_id" id="item_id" lay-verify="required" lay-search="" lay-filter="item_id">
+					<option value="">【请选择所属站点】</option>
+					{foreach $itemList as $key=>$vo}
+					{if isset($info.item_id) && $info.item_id == $vo.id}
+					<option value="{$vo.id}" selected>{$vo.name}</option>
+					{else /}
+					<option value="{$vo.id}">{$vo.name}</option>
+					{/if}
+					{/foreach}
+				</select>
+<!--				common 结束 -->
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">栏目拼音：</label>
+			<div class="layui-input-inline">
+				<input name="pinyin" value="{$info.pinyin|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入栏目拼音" class="layui-input" type="text">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">栏目简拼：</label>
+			<div class="layui-input-inline">
+				<input name="code" value="{$info.code|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入栏目简拼" class="layui-input" type="text">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">有无封面：</label>
+			<div class="layui-input-inline">
+<!--				{common:switch name="is_cover" title="有封面|无封面" value="isset($info['is_cover']) ? $info['is_cover'] : 1" hidden="cover"}-->
+<!--				common 开始 -->
+				<input name="is_cover" id="is_cover" value="{$info.is_cover|default='2'}" {if isset($info.is_cover) && $info.is_cover == 1 }checked{/if} lay-skin="switch" lay-filter="iscover" lay-text="有封面|无封面" type="checkbox">
+
+				<script>
+					layui.use(['form'], function() {
+						var form = layui.form,
+								$ = layui.$;
+
+						form.on('switch(iscover)', function(data) {
+							console.log('switch开关选择状态：' + this.checked);
+							$(data.elem).attr('type', 'hidden').val(this.checked ? 1 : 2);
+						});
+					});
+				</script>
+<!--				common 结束 -->
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">序号：</label>
+			<div class="layui-input-inline">
+				<input name="sort" id="sort" value="{$info.sort|default=125}" lay-verify="required|number" autocomplete="off" placeholder="请输入序号" class="layui-input" type="text">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item {if isset($info.is_cover) && $info.is_cover neq 1}layui-hide{/if} cover">
+		<label class="layui-form-label">栏目封面：</label>
+<!--		{upload:image name="cover|封面|90x90|建议上传尺寸450x450" value="isset($info['cover_url']) ? $info['cover_url'] : ''"}-->
+<!--		upload 开始 -->
+		<style type="text/css">.layui-upload-drag { position: relative; padding: 10px; border: 1px dashed #e2e2e2; background-color: #fff; text-align: center; cursor: pointer; color: #999; }</style>
+		<div class="layui-input-block">
+			<div class="layui-upload-drag">
+				<a href="{$info.cover_url|default='/static/admin/assets/images/default_upload.png'}" target="black">
+					<img id="cover_show_id" src="{$info.cover_url|default='/static/admin/assets/images/default_upload.png'}" alt="上传封面" title="上传封面" width="90" height="90"></a>
+				<input type="hidden" id="cover" name="cover" value="{$info.cover_url|default='/static/admin/assets/images/default_upload.png'}"></div>
+			<div style="margin-top:10px;">
+				<button type="button" class="layui-btn" id="btnUploadImg_cover">
+					<i class="layui-icon"></i>上传封面
+				</button>
+				<input class="layui-upload-file" type="file" accept="image/*" name="file">
+			</div>
+			<div class="layui-form-mid layui-word-aux">建议尺寸：建议上传尺寸450x450</div>
+		</div>
+		<script type="text/javascript">
+			layui.use(['upload', 'croppers'], function() {
+				//声明变量
+				var layer = layui.layer,
+						upload = layui.upload,
+						croppers = layui.croppers,
+						$ = layui.$;
+
+				if ("2" == 1) {
+
+					//图片裁剪组件
+					croppers.render({
+						elem: '#btnUploadImg_cover',
+						name: "cover",
+						saveW: 300 //保存宽度
+						,
+						saveH: 300,
+						mark: 1 / 1 //选取比例
+						,
+						area: ['750px', '500px'] //弹窗宽度
+						,
+						url: "/upload/uploadImage",
+						done: function(url) {
+							//上传完毕回调
+							$('#cover').val(url);
+							$('#cover_show_id').attr('src', url);
+						}
+					});
+
+				} else {
+
+					/**
+					 * 普通图片上传
+					 */
+					var uploadInst = upload.render({
+						elem: '#btnUploadImg_cover',
+						url: "/upload/uploadImage",
+						accept: 'images',
+						acceptMime: 'image/*',
+						exts: "jpg|png|gif|bmp|jpeg",
+						field: 'file' //文件域字段名
+						,
+						size: 10240 //最大允许上传的文件大小
+						,
+						before: function(obj) {
+							//预读本地文件
+						},
+						done: function(res) {
+							//上传完毕回调
+							if (!res.success) {
+								layer.msg(res.msg, {
+									icon: 5
+								});
+								return false;
+							}
+
+							//上传成功
+							$('#cover_show_id').attr('src', res.data);
+							$('#cover').val(res.data);
+						},
+						error: function() {
+							//请求异常回调
+							return layer.msg('数据请求异常');
+						}
+					});
+				}
+			});
+		</script>
+<!--		upload 结束 -->
+	</div>
+	<div class="layui-form-item layui-form-text" style="width:625px;">
+		<label class="layui-form-label">栏目说明：</label>
+		<div class="layui-input-block">
+			<textarea name="note" id="note" placeholder="请输入栏目说明" class="layui-textarea">{$info["note"]|default=''}</textarea>
+		</div>
+	</div>
+<!--	{widget:submit name="submit|立即保存,close|关闭"}-->
+<!--	widget 开始 -->
+	<div class="layui-form-item text-center model-form-footer">
+		<button class="layui-btn" lay-filter="submitForm" lay-submit="">立即保存</button>
+		<button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">关闭</button>
+	</div>
+<!--	widget 结束 -->
+</form>

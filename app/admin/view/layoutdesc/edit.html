@@ -1,0 +1,46 @@
+<form class="layui-form model-form" action="">
+	<input name="id" id="id" type="hidden" value="{$info.id|default=0}">
+	<div class="layui-form-item">
+		<label class="layui-form-label">所属站点：</label>
+		<div class="layui-input-block">
+<!--			{common:select param="item_id|1|站点名称|name|id" data="$itemList" value="isset($info['item_id']) ? $info['item_id'] : 0"}-->
+<!--			common 开始 -->
+			<select name="item_id" id="item_id" lay-verify="required" lay-search="" lay-filter="item_id">
+				<option value="">【请选择站点名称】</option>
+				{foreach $itemList as $key=>$vo}
+				{if isset($info.item_id) && $info.item_id == $vo.id}
+				<option value="{$vo.id}" selected>{$vo.name}</option>
+				{else /}
+				<option value="{$vo.id}">{$vo.name}</option>
+				{/if}
+				{/foreach}
+			</select>
+<!--			common 结束 -->
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">位置描述：</label>
+		<div class="layui-input-block">
+			<input name="loc_desc" id="loc_desc" value="{$info.loc_desc|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入位置描述" class="layui-input" type="text">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">位置编号：</label>
+		<div class="layui-input-block">
+			<input name="loc_id" id="loc_id" value="{$info.loc_id|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入位置编号" class="layui-input" type="text">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">序号：</label>
+		<div class="layui-input-block">
+			<input name="sort" id="sort" value="{$info.sort|default=125}" lay-verify="required|number" autocomplete="off" placeholder="请输入序号" class="layui-input" type="text">
+		</div>
+	</div>
+<!--	{widget:submit name="submit|立即保存,close|关闭"}-->
+<!--	widget 开始 -->
+	<div class="layui-form-item text-center model-form-footer">
+		<button class="layui-btn" lay-filter="submitForm" lay-submit="">立即保存</button>
+		<button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">关闭</button>
+	</div>
+<!--	widget 结束 -->
+</form>

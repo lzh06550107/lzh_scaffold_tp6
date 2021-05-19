@@ -1,0 +1,109 @@
+<form class="layui-form model-form" action="">
+	<input name="id" id="id" type="hidden" value="{$info.id|default=0}">
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">配置分组：</label>
+			<div class="layui-input-inline">
+<!--				{common:select param="group_id|1|配置分组|name|id" data="$groupList" value="isset($info['group_id']) ? $info['group_id'] : 0"}-->
+<!--				common 开始 -->
+				<select name="group_id" id="group_id" lay-verify="required" lay-search="" lay-filter="group_id">
+					<option value="">【请选择配置分组】</option>
+					{foreach $groupList as $key=>$vo}
+					{if isset($info.group_id) && $info.group_id == $vo.id}
+					<option value="{$vo.id}" selected>{$vo.name}</option>
+					{else /}
+					<option value="{$vo.id}">{$vo.name}</option>
+					{/if}
+					{/foreach}
+				</select>
+<!--				common 结束 -->
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">配置类型：</label>
+			<div class="layui-input-inline">
+<!--				{common:select param="type|1|配置类型|name|id" data="$typeList" value="isset($info['type']) ? $info['type'] : 1"}-->
+				<!--				common 开始 -->
+				<select name="type" id="type" lay-verify="required" lay-search="" lay-filter="type">
+					<option value="">【请选择配置类型】</option>
+					{foreach $typeList as $key=>$vo}
+					{if isset($info.type) && $info.type == $key}
+					<option value="{$key}" selected>{$vo}</option>
+					{else /}
+					<option value="{$key}">{$vo}</option>
+					{/if}
+					{/foreach}
+				</select>
+				<!--				common 结束 -->
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">配置名称：</label>
+			<div class="layui-input-inline">
+				<input name="name" id="name" value="{$info.name|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入配置名称" class="layui-input" type="text">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">配置标题：</label>
+			<div class="layui-input-inline">
+				<input name="title" id="title" value="{$info.title|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入配置标题" class="layui-input" type="text">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item layui-form-text" style="width:625px;">
+		<label class="layui-form-label">配置值：</label>
+		<div class="layui-input-block">
+			<textarea name="value" id="value" placeholder="请输入配置值" class="layui-textarea">{$info['value']|default=''}</textarea>
+		</div>
+	</div>
+	<div class="layui-form-item layui-form-text" style="width:625px;">
+		<label class="layui-form-label">配置项：</label>
+		<div class="layui-input-block">
+			<textarea name="options" id="options" placeholder="请输入配置项" class="layui-textarea">{$info['options']|default=''}</textarea>
+		</div>
+	</div>
+	<div class="layui-form-item layui-form-text" style="width:625px;">
+		<label class="layui-form-label">配置说明：</label>
+		<div class="layui-input-block">
+			<textarea name="remark" id="remark" placeholder="请输入配置说明" class="layui-textarea">{$info['remark']|default=''}</textarea>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">状态：</label>
+			<div class="layui-input-inline">
+<!--				{common:switch name="status" title="是|否" value="isset($info['status']) ? $info['status'] : 1"}-->
+				<!--				common 开始 -->
+				<input name="status" id="status" {if isset($info.status) && $info.status == 1 }checked{/if} value="{$info.status|default='1'}" lay-skin="switch" lay-filter="status" lay-text="是|否" type="checkbox">
+				<script>
+					layui.use(['form'], function() {
+						var form = layui.form,
+								$ = layui.$;
+
+						form.on('switch(status)',function(data) {
+							console.log('switch开关选择状态：' + this.checked);
+							$(data.elem).attr('type', 'hidden').val(this.checked ? 1 : 2);
+						});
+					});
+				</script>
+				<!--				common 结束 -->
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">排序：</label>
+			<div class="layui-input-inline">
+				<input name="sort" value="{$info.sort|default=125}" lay-verify="required|number" autocomplete="off" placeholder="请输入排序" class="layui-input" type="text">
+			</div>
+		</div>
+	</div>
+<!--	{widget:submit name="submit|立即保存,close|关闭"}-->
+	<!--				common 开始 -->
+	<div class="layui-form-item text-center model-form-footer">
+		<button class="layui-btn" lay-filter="submitForm" lay-submit="">立即保存</button>
+		<button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">关闭</button>
+	</div>
+	<!--				common 结束 -->
+</form>
+

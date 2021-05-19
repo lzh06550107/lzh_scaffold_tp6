@@ -1,0 +1,63 @@
+<!-- 引入基类模板 -->
+{extend name='public/base' /}
+
+<!-- 主体部分 -->
+{block name='content'}
+
+	<!-- 功能操作区一 -->
+	<form class="layui-form toolbar">
+       <div class="layui-form-item">
+		   <div class="layui-inline">
+			   <label class="layui-form-label w-auto">城市名称：</label>
+			   <div class="layui-input-inline">
+				   <input type="text" name="name" id="keywords" placeholder="请输入城市名称" autocomplete="off" class="layui-input">
+			   </div>
+		   </div>
+            <div class="layui-inline">
+                <div class="layui-input-inline" style="width: auto;">
+<!--					{widget:query name="查询"}-->
+<!--					{widget:add name="添加城市"}-->
+<!--					{widget:dall name="批量删除"}-->
+<!--					{widget:expand name="全部展开"}-->
+<!--					{widget:collapse name="全部折叠"}-->
+					<button class="layui-btn" lay-submit="" lay-filter="searchForm" id="search">
+						<i class="layui-icon"></i>查询
+					</button>
+					<a href="javascript:" class="layui-btn btnOption  layui-btn-small btnAdd" id="add" data-param="[]" lay-event="add">
+						<i class="layui-icon layui-icon-add-1"></i>添加城市
+					</a>
+					<a href="javascript:" class="layui-btn btnOption layui-btn-normal layui-btn-small btnExpand" id="expand" data-param="[]" lay-event="expand">
+						<i class="layui-icon layui-icon-shrink-right"></i>全部展开
+					</a>
+					<a href="javascript:" class="layui-btn btnOption layui-btn-warm layui-btn-small btnCollapse" id="collapse" data-param="[]" lay-event="collapse">
+						<i class="layui-icon layui-icon-spread-left"></i>全部折叠
+					</a>
+               </div>
+           </div>
+       </div>
+	</form>
+
+	<!-- TREE渲染区 -->
+	<table id="tableList" class="layui-hide" lay-filter="tableList"></table>
+	
+	<!-- 操作功能区二 -->
+	<script type="text/html" id="toolBar">
+<!--		{widget:edit name="编辑"}-->
+<!--		{widget:delete name="删除"}-->
+<!--		{{#  if(d.level > 1){ }}-->
+<!--		{widget:addz name="添加"}-->
+<!--		{{#  } }}-->
+		<a class="layui-btn layui-btn-xs btnEdit" lay-event="edit" title="编辑">
+			<i class="layui-icon"></i>编辑
+		</a>
+		<a class="layui-btn layui-btn-danger layui-btn-xs btnDel" lay-event="del" title="删除">
+			<i class="layui-icon"></i>删除
+		</a>
+		{{#  if(d.level > 1){ }}
+		<a href="javascript:" class="layui-btn btnOption layui-btn-normal layui-btn-xs btnAddz" id="addz" data-param="[]" lay-event="addz">
+			<i class="layui-icon layui-icon-add-1"></i>添加
+		</a>
+		{{#  } }}
+	</script>
+
+{/block}

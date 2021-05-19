@@ -1,0 +1,187 @@
+<form class="layui-form model-form" action="" style="width: 70%;">
+	<input name="id" id="id" type="hidden" value="{$info.id|default=0}">
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">通知标题：</label>
+			<div class="layui-input-inline">
+				<input name="title" value="{$info.title|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入通知标题" class="layui-input" type="text">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">通知来源：</label>
+			<div class="layui-input-inline">
+<!--				{common:select param="source|1|通知来源|name|id" data="$sourceList" value="isset($info['source']) ? $info['source'] : 1"}-->
+<!--				common 开始 -->
+				<select name="source" id="source" lay-verify="required" lay-search="" lay-filter="source">
+					<option value="">【请选择通知来源】</option>
+					{foreach $sourceList as $key=>$vo}
+					{if isset($info.source) && $info.source == $key}
+					<option value="{$key}" selected>{$vo}</option>
+					{else /}
+					<option value="{$key}">{$vo}</option>
+					{/if}
+					{/foreach}
+				</select>
+<!--				common 结束 -->
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">是否置顶：</label>
+			<div class="layui-input-inline">
+<!--				{common:switch name="is_top" title="已置顶|未置顶" value="isset($info['is_top']) ? $info['is_top'] : 2"}-->
+<!--				common 开始 -->
+				<input name="is_top" id="is_top" value="{$info.is_top|default='2'}" {if isset($info.is_top) && $info.is_top == 1 }checked{/if} lay-skin="switch" lay-filter="istop" lay-text="已置顶|未置顶" type="checkbox">
+				<script>
+					layui.use(['form'], function() {
+						var form = layui.form,
+								$ = layui.$;
+
+						form.on('switch(istop)', function(data) {
+							console.log('switch开关选择状态：' + this.checked);
+							$(data.elem).attr('type', 'hidden').val(this.checked ? 1 : 2);
+						});
+					});
+				</script>
+<!--				common 结束 -->
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">阅读量：</label>
+			<div class="layui-input-inline">
+				<input name="view_num" value="{$info.view_num|default=''}" lay-verify="required|number" autocomplete="off" placeholder="请输入阅读量" class="layui-input" type="text">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">发布状态：</label>
+			<div class="layui-input-inline">
+<!--				{common:select param="status|1|发布状态|name|id" data="$statusList" value="isset($info['status']) ? $info['status'] : 3"}-->
+<!--				common 开始 -->
+				<select name="status" id="status" lay-verify="required" lay-search="" lay-filter="status">
+					<option value="">【请选择发布状态】</option>
+					{foreach $statusList as $key=>$vo}
+					{if isset($info.status) && $info.status == $key}
+					<option value="{$key}" selected>{$vo}</option>
+					{else /}
+					<option value="{$key}">{$vo}</option>
+					{/if}
+					{/foreach}
+				</select>
+<!--				common 结束 -->
+			</div>
+		</div>
+		<div class="layui-inline layui-hide publishTime">
+			<label class="layui-form-label">发布时间：</label>
+			<div class="layui-input-inline">
+<!--				{date:select param="publish_time|出生日期|datetime" value="$info.format_publish_time|default=''"}-->
+<!--				date 开始 -->
+				<input name="publish_time" id="publish_time" value="{$info.publish_time|default=''}" lay-verify="datetime" placeholder="请选择出生日期" autocomplete="off" class="layui-input date-icon" type="text" lay-key="1">
+				<script>
+					layui.use(['function'], function() {
+						var func = layui.
+								function;
+
+						// 初始化日期
+						func.initDate(['publish_time|datetime||'], function(value, date) {
+							console.log("当前选择日期:" + value);
+							console.log("日期详细信息：" + JSON.stringify(date));
+						});
+					});
+				</script>
+<!--				date 结束 -->
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">通知内容：</label>
+		<div class="layui-input-block">
+			<textarea name="content" id="content" lay-verify="required" class="layui-textarea">{$info.content|default=''}</textarea>
+<!--			{editor:kindeditor name="content" type="default" width="100%" height="350"}-->
+<!--			editor 开始 -->
+			<style type="text/css">form{ margin:0; } textarea{ display:block;}</style>
+			<link rel="stylesheet" href="/static/admin/assets/libs/kindeditor/themes/default/default.css">
+			<if condition="$type eq simple">
+				<link rel="stylesheet" href="/static/admin/assets/libs/kindeditor/themes/simple/simple.css"></if>
+			<script type="text/javascript" src="/static/admin/assets/libs/kindeditor/kindeditor-min.js"></script>
+			<script type="text/javascript" src="/static/admin/assets/libs/kindeditor/lang/zh_CN.js"></script>
+			<script type="text/javascript">(function() {
+				var editor;
+				var items = {
+					simple: ['source', 'preview', 'plainpaste', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'removeformat', '|', 'justifyleft', 'justifycenter', 'justifyright', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'quickformat', '|', 'link'],
+					default:
+							['source', '|', 'undo', 'redo', '|', 'preview', 'print', 'template', 'code', 'cut', 'copy', 'paste', 'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript', 'superscript', 'clearhtml', 'quickformat', 'selectall', '|', 'fullscreen', '/', 'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|', 'image', 'multiimage', 'flash', 'media', 'insertfile', 'table', 'hr', 'emoticons', 'baidumap', 'pagebreak', 'anchor', 'link', 'unlink', '|', 'about']
+
+				};
+
+				var options = {
+					allowFileManager: true,
+					width: "100%",
+					height: 350,
+					designMode: true,
+					fullscreenMode: false,
+					filterMode: true,
+					wellFormatMode: true,
+					shadowMode: true,
+					loadStyleMode: true,
+					themeType: 'default',
+					langType: 'zh_CN',
+					urlType: '',
+					newlineTag: 'p',
+					resizeType: 2,
+					syncType: 'form',
+					pasteType: 2,
+					dialogAlignType: 'page',
+					useContextmenu: true,
+					fullscreenShortcut: false,
+					bodyClass: 'ke-content',
+					indentChar: '\t',
+					cssPath: '',
+					cssData: '',
+					minWidth: 650,
+					minHeight: 100,
+					minChangeSize: 50,
+					zIndex: 811213,
+					items: items['default'],
+					noDisableItems: ['source', 'fullscreen'],
+					colorTable: [['#E53333', '#E56600', '#FF9900', '#64451D', '#DFC5A4', '#FFE500'], ['#009900', '#006600', '#99BB00', '#B8D100', '#60D978', '#00D5FF'], ['#337FE5', '#003399', '#4C33E5', '#9933E5', '#CC33E5', '#EE33EE'], ['#FFFFFF', '#CCCCCC', '#999999', '#666666', '#333333', '#000000']],
+					fontSizeTable: ['9px', '10px', '12px', '14px', '16px', '18px', '24px', '32px'],
+					htmlTags: {
+						font: ['id', 'class', 'color', 'size', 'face', '.background-color'],
+						span: ['id', 'class', '.color', '.background-color', '.font-size', '.font-family', '.background', '.font-weight', '.font-style', '.text-decoration', '.vertical-align', '.line-height'],
+						div: ['id', 'class', 'align', '.border', '.margin', '.padding', '.text-align', '.color', '.background-color', '.font-size', '.font-family', '.font-weight', '.background', '.font-style', '.text-decoration', '.vertical-align', '.margin-left'],
+						table: ['id', 'class', 'border', 'cellspacing', 'cellpadding', 'width', 'height', 'align', 'bordercolor', '.padding', '.margin', '.border', 'bgcolor', '.text-align', '.color', '.background-color', '.font-size', '.font-family', '.font-weight', '.font-style', '.text-decoration', '.background', '.width', '.height', '.border-collapse'],
+						'td,th': ['id', 'class', 'align', 'valign', 'width', 'height', 'colspan', 'rowspan', 'bgcolor', '.text-align', '.color', '.background-color', '.font-size', '.font-family', '.font-weight', '.font-style', '.text-decoration', '.vertical-align', '.background', '.border'],
+						a: ['id', 'class', 'href', 'target', 'name'],
+						embed: ['id', 'class', 'src', 'width', 'height', 'type', 'loop', 'autostart', 'quality', '.width', '.height', 'align', 'allowscriptaccess'],
+						img: ['id', 'class', 'src', 'width', 'height', 'border', 'alt', 'title', 'align', '.width', '.height', '.border'],
+						'p,ol,ul,li,blockquote,h1,h2,h3,h4,h5,h6': ['id', 'class', 'align', '.text-align', '.color', '.background-color', '.font-size', '.font-family', '.background', '.font-weight', '.font-style', '.text-decoration', '.vertical-align', '.text-indent', '.margin-left'],
+						pre: ['id', 'class'],
+						hr: ['id', 'class', '.page-break-after'],
+						'br,tbody,tr,strong,b,sub,sup,em,i,u,strike,s,del': ['id', 'class'],
+						iframe: ['id', 'class', 'src', 'frameborder', 'width', 'height', '.width', '.height']
+					},
+					layout: '<div class="container"><div class="toolbar"></div><div class="edit"></div><div class="statusbar"></div></div>',
+					afterBlur: function() {
+						editor.sync();
+					}
+				};
+
+				KindEditor.ready(function(K) {
+					editor = K.create('textarea[name="content"]', options);
+				});
+			})();
+			</script>
+<!--			editor 结束 -->
+		</div>
+	</div>
+<!--	{widget:submit name="submit|立即保存,close|关闭"}-->
+<!--	widget 开始 -->
+	<div class="layui-form-item text-center model-form-footer">
+		<button class="layui-btn" lay-filter="submitForm" lay-submit="">立即保存</button>
+		<button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">关闭</button>
+	</div>
+<!--	widget 结束 -->
+</form>

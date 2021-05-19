@@ -1,0 +1,437 @@
+<form class="layui-form model-form" action="">
+	<input name="id" id="id" type="hidden" value="{$info.id|default=0}">
+	<div class="layui-form-item">
+		<label class="layui-form-label">头像：</label>
+<!--		{upload:image name="avatar|头像|90x90|建议上传尺寸450x450|450x450" value="isset($info['avatar_url']) ? $info['avatar_url'] : ''"}-->
+<!-- upload:image 开始 -->
+		<style type="text/css">
+			.layui-upload-drag {
+				position: relative;
+				padding: 10px;
+				border: 1px dashed #e2e2e2;
+				background-color: #fff;
+				text-align: center;
+				cursor: pointer;
+				color: #999;
+			}
+		</style>
+		<div class="layui-input-block">
+			<div class="layui-upload-drag">
+<!--				如果存在用户头像，则显示，如果没有，则显示默认头像-->
+				<a href="{$info.avatar_url|default='/static/admin/assets/images/default_upload.png'}" target="black">
+					<img id="avatar_show_id" src="{$info.avatar_url|default='/static/admin/assets/images/default_upload.png'}" alt="上传头像" title="上传头像" width="90" height="90">
+				</a>
+				<input type="hidden" id="avatar" name="avatar" value="">
+			</div>
+			<div style="margin-top:10px;">
+				<button type="button" class="layui-btn" id="btnUploadImg_avatar"><i class="layui-icon"></i>上传头像</button>
+			</div>
+			<div class="layui-form-mid layui-word-aux">建议尺寸：建议上传尺寸450x450</div>
+		</div>
+		<script type="text/javascript">
+			layui.use(['upload','croppers'],function(){
+				//声明变量
+				var layer = layui.layer
+					,upload = layui.upload
+					,croppers = layui.croppers
+					,$ = layui.$;
+
+				if("1"==1) {
+
+					//图片裁剪组件
+					croppers.render({
+						elem: '#btnUploadImg_avatar'
+						,name:"avatar"
+						,saveW:450     //保存宽度
+						,saveH:450
+						,mark:1/1    //选取比例
+						,area:['750px','500px']  //弹窗宽度
+						,url: "/upload/uploadImage"
+						,done: function(url){
+							//上传完毕回调
+							$('#avatar').val(url);
+							$('#avatar_show_id').attr('src',url);
+						}
+					});
+
+				} else {
+
+					/**
+					 * 普通图片上传
+					 */
+					var uploadInst = upload.render({
+						elem: '#btnUploadImg_avatar'
+						,url: "/upload/uploadImage"
+						,accept:'images'
+						,acceptMime:'image/*'
+						,exts: "jpg|png|gif|bmp|jpeg"
+						,field:'file'//文件域字段名
+						,size: 10240 //最大允许上传的文件大小
+						,before: function(obj){
+							//预读本地文件
+						}
+						,done: function(res){
+							//上传完毕回调
+
+							if(!res.success){
+								layer.msg(res.msg,{ icon: 5 });
+								return false;
+							}
+
+							//上传成功
+							$('#avatar_show_id').attr('src', res.data);
+							$('#avatar').val(res.data);
+						}
+						,error: function(){
+							//请求异常回调
+							return layer.msg('数据请求异常');
+						}
+					});
+				}
+			});
+
+		</script>
+<!-- upload:image 结束 -->
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">真实姓名：</label>
+			<div class="layui-input-inline">
+				<input name="realname" value="{$info.realname|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入真实姓名" class="layui-input" type="text">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">人员昵称：</label>
+			<div class="layui-input-inline">
+				<input name="nickname" value="{$info.nickname|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入人员昵称" class="layui-input" type="text">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">手机号码：</label>
+			<div class="layui-input-inline">
+				<input name="mobile" value="{$info.mobile|default=''}" lay-verify="required|phone" placeholder="请输入手机号码" autocomplete="off" class="layui-input" type="tel">
+			</div>
+		</div>
+
+		<div class="layui-inline">
+			<label class="layui-form-label">电子邮箱：</label>
+			<div class="layui-input-inline">
+				<input name="email" value="{$info.email|default=''}" lay-verify="required|email" placeholder="请输入邮箱" autocomplete="off" class="layui-input" type="text">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">身份证号：</label>
+			<div class="layui-input-inline">
+				<input name="identity" value="{$info.identity|default=''}" lay-verify="identity" placeholder="请输入身份证号" autocomplete="off" class="layui-input" type="text">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">性别：</label>
+			<div class="layui-input-inline">
+<!--				{common:select param="gender|1|性别|name|id" data="$genderList" value="isset($info['gender']) ? $info['gender'] : 1"}-->
+<!-- common:select 开始 -->
+				<select name="gender" id="gender" lay-verify="required" lay-search="" lay-filter="gender">
+					<option value="">【请选择性别】</option>
+					{foreach $genderList as $key=>$vo}
+					{if isset($info.gender) && $info.gender == $key}
+					<option value="{$key}" selected>{$vo}</option>
+					{else /}
+					<option value="{$key}">{$vo}</option>
+					{/if}
+					{/foreach}
+				</select>
+<!-- common:select 结束 -->
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">职级：</label>
+			<div class="layui-input-inline">
+<!--				{common:select param="level_id|1|职级|name|id" data="$levelList" value="isset($info['level_id']) ? $info['level_id'] : 0"}-->
+<!-- common:select 开始 -->
+				<select name="level_id" id="level_id" lay-verify="required" lay-search="" lay-filter="level_id">
+					<option value="">【请选择职级】</option>
+					{foreach $levelList as $key=>$vo}
+					{if isset($info.level_id) && $info.level_id == $vo.id}
+					<option value="{$vo.id}" selected>{$vo.name}</option>
+					{else /}
+					<option value="{$vo.id}">{$vo.name}</option>
+					{/if}
+					{/foreach}
+				</select>
+
+<!-- common:select 结束 -->
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">岗位：</label>
+			<div class="layui-input-inline">
+<!--				{common:select param="position_id|1|岗位|name|id" data="$positionList" value="isset($info['position_id']) ? $info['position_id'] : 0"}-->
+<!-- common:select 开始 -->
+				<select name="position_id" id="position_id" lay-verify="required" lay-search="" lay-filter="position_id">
+					<option value="">【请选择岗位】</option>
+					{foreach $positionList as $key=>$vo}
+					{if isset($info.position_id) && $info.position_id == $vo.id}
+					<option value="{$vo.id}" selected>{$vo.name}</option>
+					{else /}
+					<option value="{$vo.id}">{$vo.name}</option>
+					{/if}
+					{/foreach}
+				</select>
+<!-- common:select 结束 -->
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">入职时间：</label>
+			<div class="layui-input-inline">
+<!--				{date:select param="entry_date|入职时间|date" value="$info.format_entry_date|default=''"}-->
+<!-- date:select 开始 -->
+				<input name="entry_date" id="entry_date" value="{$info.entry_date|default=''}" lay-verify="date" placeholder="请选择入职时间" autocomplete="off" class="layui-input date-icon" type="text" lay-key="1">
+				<script>
+					layui.use(['function'], function () {
+						var func = layui.function;
+
+						// 初始化日期
+						func.initDate(['entry_date|date||'], function (value, date) {
+							console.log("当前选择日期:" + value);
+							console.log("日期详细信息：" + JSON.stringify(date));
+						});
+					});
+				</script>
+<!-- date:select 结束 -->
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">所属部门：</label>
+			<div class="layui-input-inline">
+<!--				{common:select param="dept_id|0|所属部门|name|id" data="$deptList" value="isset($info['dept_id']) ? $info['dept_id'] : 0"}-->
+<!-- common:select 开始 -->
+				<select name="dept_id" id="dept_id" lay-search="" lay-filter="dept_id">
+					<option value="">【请选择所属部门】</option>
+					{foreach $deptList as $key=>$vo}
+					{if isset($info.dept_id) && $info.dept_id == $vo.id}
+					<option value="{$vo.id}" selected>{$vo.name}</option>
+					{else /}
+					<option value="{$vo.id}">{$vo.name}</option>
+					{/if}
+					{/foreach}
+				</select>
+<!-- common:select 结束 -->
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">用户名：</label>
+			<div class="layui-input-inline">
+				<input name="username" value="{$info.username|default=''}" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input" type="text">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">密码：</label>
+			<div class="layui-input-inline">
+				<input name="password" placeholder="请输入密码" autocomplete="off" class="layui-input" type="password">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">所属城市：</label>
+<!-- {city:select value="isset($info['province_name'])?$info['province_name']: '',isset($info['city_name'])?$info['city_name']:'',isset($info['district_name'])?$info['district_name']:''" limit="3"}-->
+<!-- city:select 开始 -->
+		<div class="layui-input-inline" style="width:165px;">
+			<select name="province_id" id="province_id" lay-filter="province_id" lay-search="">
+				<option value="">【请选择省份】</option>
+				{foreach $provinceList as $key=>$vo}
+				{if isset($info.province_id) && $info.province_id == $vo.id}
+				<option value="{$vo.id}" selected>{$vo.name}</option>
+				{else /}
+				<option value="{$vo.id}">{$vo.name}</option>
+				{/if}
+				{/foreach}
+			</select>
+		</div>
+		<div class="layui-input-inline" style="width:165px;">
+			<select name="city_id" id="city_id" lay-filter="city_id" lay-search="">
+				<option value="{$info.city_id|default=''}">{$info.city_name|default=''}</option>
+			</select>
+		</div>
+		<div class="layui-input-inline" style="width:165px;">
+			<select name="district_id" id="district_id" lay-filter="district_id" lay-search="">
+				<option value="{$info.district_id|default=''}">{$info.district_name|default=''}</option>
+			</select>
+		</div>
+		<br>
+		<script type="text/javascript">
+			layui.use(['form'], function() {
+
+					// 声明变量
+					var form = layui.form,
+							$ = layui.$;
+
+					// 选择省份
+					form.on('select(province_id)', function(data) {
+						var id = data.value;
+						console.log("省份ID:" + id);
+						var select = data.othis;
+						if (select[0]) {
+							if (id > 0) {
+								$.post("/city/getChilds", {
+											'id': id
+										},
+										function(data) {
+											if (data.success) {
+												var str = "";
+												$.each(data.data,
+														function(i, item) {
+															str += "<option value=\"" + i + "\" >" + item.name + "</option>";
+														});
+												$("#city_id").html('<option value="">【请选择市】</option>' + str);
+												$("#district_id").html('<option value="">【请选择县/区】</option>');
+												form.render('select');
+											} else {
+												layer.msg(data.msg, {
+													icon: 5
+												});
+
+												$("#city_id").html('<option value="">【请选择市】</option>');
+												$("#district_id").html('<option value="">【请选择县/区】</option>');
+												form.render('select');
+
+												return false;
+											}
+										}, 'json');
+							} else {
+
+							}
+						}
+					});
+
+					// 选择城市
+					form.on('select(city_id)', function(data) {
+						var id = data.value;
+						console.log("城市ID:" + id);
+						var select = data.othis;
+						if (select[0]) {
+							if (id > 0) {
+								$.post("/city/getChilds", {
+											'id': id
+										},
+										function(data) {
+											if (data.success) {
+												var str = "";
+												$.each(data.data,
+														function(i, item) {
+															str += "<option value=\"" + i + "\" >" + item.name + "</option>";
+														});
+												$("#district_id").html('<option value="">【请选择县/区】</option>' + str);
+												form.render('select');
+											}
+										},
+										'json');
+							} else {
+								layer.msg(data.msg, {
+									icon: 5
+								});
+
+								$("#district_id").html('<option value="">【请选择县/区】</option>');
+								form.render('select');
+
+								return false;
+							}
+						}
+					});
+
+					// 选择县区
+					form.on("select(district_id)", function(data) {
+						var id = data.value;
+						console.log("县区ID:" + id);
+					});
+
+				});
+		</script>
+<!-- city:select 结束 -->
+	</div>
+	<div class="layui-form-item" style="width: 625px;">
+		<label class="layui-form-label">详细地址：</label>
+		<div class="layui-input-block">
+			<input name="address" value="{$info.address|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入详细地址" class="layui-input" type="text">
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<label class="layui-form-label">所属角色：</label>
+		<div class="layui-input-block">
+<!--			{checkbox:select param="role_ids|name|id" data="$roleList" value="isset($info['role_ids']) ? $info['role_ids'] : ''"}-->
+<!-- checkbox:select 开始 -->
+			{foreach $roleList as $key=>$vo}
+			{if isset($info.role_ids) && in_array($vo.id, explode(',',$info.role_ids))}
+			<input name="role_ids[{$vo.id|raw}]" lay-skin="primary" title="{$vo.name}" type="checkbox" checked>
+			{else /}
+			<input name="role_ids[{$vo.id|raw}]" lay-skin="primary" title="{$vo.name}" type="checkbox">
+			{/if}
+			{/foreach}
+<!-- checkbox:select 结束 -->
+		</div>
+	</div>
+	<div class="layui-form-item layui-form-text" style="width:625px;">
+		<label class="layui-form-label">备注：</label>
+		<div class="layui-input-block">
+			<textarea name="note" id="note" placeholder="请输入备注" class="layui-textarea">{$info.note|default=''}</textarea>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">管理员：</label>
+			<div class="layui-input-inline">
+<!--				{common:switch name="is_admin" title="是|否" value="isset($info['is_admin']) ? $info['is_admin'] : 2"}-->
+<!-- common:switch 开始 -->
+				<input type="checkbox" lay-skin="switch" name="is_admin" id="is_admin" value="{$info.is_admin|default='2'}" lay-filter="isadmin" lay-text="是|否" type="hidden"  {if isset($info.is_admin) && $info.is_admin == 1 }checked{/if}/>
+				<script>
+					layui.use(['form'], function() {
+							var form = layui.form,
+									$ = layui.$;
+
+							form.on('switch(isadmin)', function(data) {
+								console.log('switch开关选择状态：' + this.checked);
+								$(data.elem).attr('type', 'hidden').val(this.checked ? 1 : 2);
+							});
+						});
+				</script>
+<!-- common:switch 结束 -->
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">状态：</label>
+			<div class="layui-input-inline">
+<!--				{common:switch name="status" title="在用|禁用" value="isset($info['status']) ? $info['status'] : 1"}-->
+<!-- common:switch 开始 -->
+				<input type="checkbox" lay-skin="switch" name="status" id="status" value="{$info.status|default='1'}" lay-filter="status" lay-text="在用|禁用" type="hidden" {if isset($info.status) && $info.status == 1 }checked{/if} >
+				<script>
+					layui.use(['form'], function() {
+							var form = layui.form,
+									$ = layui.$;
+
+							form.on('switch(status)', function(data) {
+								console.log('switch开关选择状态：' + this.checked);
+								$(data.elem).attr('type', 'hidden').val(this.checked ? 1 : 2);
+							});
+						});
+				</script>
+<!-- common:switch 结束 -->
+			</div>
+		</div>
+	</div>
+<!--	{widget:submit name="submit|立即保存,close|关闭"}-->
+<!-- widget:submit 开始 -->
+	<div class="layui-form-item text-center model-form-footer">
+		<button class="layui-btn" lay-filter="submitForm" lay-submit="">立即保存</button>
+		<button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">关闭</button>
+	</div>
+<!-- widget:submit 结束 -->
+</form>

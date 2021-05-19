@@ -1,0 +1,351 @@
+<form class="layui-form model-form" action="">
+	<input name="id" id="id" type="hidden" value="{$info.id|default=0}">
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">菜单名称：</label>
+			<div class="layui-input-inline">
+				<input name="name" value="{$info.name|default=''}" lay-verify="required" autocomplete="off" placeholder="请输入菜单名称" class="layui-input" type="text">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">菜单图标：</label>
+			<div class="layui-input-inline">
+<!--				{icon:picker name="icon" value="isset($info['icon']) ? $info['icon'] : 'layui-icon-component'"}-->
+<!--				icon 开始 -->
+				<input type="text" id="icon" name="icon" lay-filter="icon" value="layui-icon-component">
+				<style type="text/css">
+					.layui-iconpicker .layui-anim { display: none; position: absolute; left: 0; top: 42px; padding: 5px 0; z-index: 899; min-width: 150%; border: 1px solid #d2d2d2; max-height: 300px; overflow-y: auto; background-color: #fff; border-radius: 2px; box-shadow: 0 2px 4px rgba(0,0,0,.12); box-sizing: border-box; }
+				</style>
+				<script>
+
+					layui.use(['iconPicker'], function() {
+							var iconPicker = layui.iconPicker;
+
+							/**
+							 * 选中图标 （常用于更新时默认选中图标）
+							 */
+							iconPicker.checkIcon('icon', 'layui-icon-component')
+
+							iconPicker.render({
+								// 选择器，推荐使用input
+								elem: '#icon',
+								// 数据类型：fontClass/unicode，推荐使用fontClass
+								type: 'fontClass',
+								// 是否开启搜索：true/false，默认true
+								search: true,
+								// 是否开启分页：true/false，默认true
+								page: true,
+								// 每页显示数量，默认12
+								limit: 12,
+								// 点击回调
+								click: function(data) {
+									console.log(data);
+								},
+								// 渲染成功后的回调
+								success: function(d) {
+									console.log(d);
+								}
+							});
+						});
+				</script>
+<!--				icon 结束 -->
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">URL地址：</label>
+			<div class="layui-input-inline">
+				<input name="url" value="{$info.url|default=''}" autocomplete="off" placeholder="请输入URL地址" class="layui-input" type="text">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">参数：</label>
+			<div class="layui-input-inline">
+				<input name="param" value="{$info.param|default=''}" autocomplete="off" placeholder="请输入参数" class="layui-input" type="text">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">菜单类型：</label>
+			<div class="layui-input-inline">
+<!--				{common:select param="type|1|菜单类型|name|id" data="$typeList" value="isset($info['type']) ? $info['type'] : 0"}-->
+<!--				common 开始 -->
+				<select name="type" id="type" lay-verify="required" lay-search="" lay-filter="type">
+					<option value="">【请选择菜单类型】</option>
+					{foreach $typeList as $key=>$vo}
+					{if isset($info.type) && $info.type == $key}
+					<option value="{$key}" selected>{$vo}</option>
+					{else /}
+					<option value="{$key}">{$vo}</option>
+					{/if}
+					{/foreach}
+				</select>
+<!--				common 结束 -->
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">上级菜单：</label>
+			<div class="layui-input-inline">
+<!--				{common:select param="pid|1|上级菜单|name|id" data="$menuList" value="isset($info['pid']) ? $info['pid'] : 0"}-->
+<!--				common 开始 -->
+				<select name="pid" id="pid" lay-verify="required" lay-search="" lay-filter="pid">
+					<option value="">【请选择上级菜单】</option>
+					{foreach $menuList as $key=>$vo}
+					{if isset($info.pid) && $info.pid == $vo.id}
+					<option value="{$vo.id}" selected>{$vo.name}</option>
+					{else /}
+					<option value="{$vo.id}">{$vo.name}</option>
+					{/if}
+					{/foreach}
+				</select>
+<!--				common 结束 -->
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">权限标识：</label>
+			<div class="layui-input-inline">
+				<input name="permission" value="{$info.permission|default=''}" autocomplete="off" placeholder="请输入权限标识" class="layui-input" type="text">
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">序号：</label>
+			<div class="layui-input-inline">
+				<input name="sort" value="{$info.sort|default=125}" lay-verify="required|number" autocomplete="off" placeholder="请输入序号" class="layui-input" type="text">
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item">
+		<div class="layui-inline">
+			<label class="layui-form-label">是否显示：</label>
+			<div class="layui-input-inline">
+<!--				{common:switch name="status" title="显示|隐藏" value="isset($info['status']) ? $info['status'] : 1"}-->
+<!--				common 开始 -->
+				<input name="status" id="status" value="{$info.status|default='2'}" {if isset($info.status) && $info.status == 1 }checked{/if} lay-skin="switch" lay-filter="status" lay-text="显示|隐藏" type="checkbox">
+
+				<script>
+					layui.use(['form'], function() {
+						var form = layui.form,
+								$ = layui.$;
+
+						form.on('switch(status)', function(data) {
+							console.log('switch开关选择状态：' + this.checked);
+							$(data.elem).attr('type', 'hidden').val(this.checked ? 1 : 2);
+						});
+					});
+				</script>
+<!--				common 结束 -->
+			</div>
+		</div>
+		<div class="layui-inline">
+			<label class="layui-form-label">公共菜单：</label>
+			<div class="layui-input-inline">
+<!--				{common:switch name="is_public" title="是|否" value="isset($info['is_public']) ? $info['is_public'] : 2"}-->
+<!--				common 开始 -->
+				<input name="is_public" id="is_public" value="{$info.status|default='2'}" {if isset($info.is_public) && $info.is_public == 1 }checked{/if} lay-skin="switch" lay-filter="ispublic" lay-text="是|否" type="checkbox">
+				<script>layui.use(['form'], function() {
+					var form = layui.form,
+							$ = layui.$;
+
+					form.on('switch(ispublic)', function(data) {
+						console.log('switch开关选择状态：' + this.checked);
+						$(data.elem).attr('type', 'hidden').val(this.checked ? 1 : 2);
+					});
+				});
+				</script>
+<!--				common 结束 -->
+			</div>
+		</div>
+	</div>
+	<div class="layui-form-item func layui-hide">
+		<label class="layui-form-label">权限节点：</label>
+		<div class="layui-input-block">
+<!--			TODO 不能回显，需要进一步优化-->
+<!--			{transfer:select param="func|0|全部节点,已赋予节点|name|id|220x350" data="1=列表,5=添加,10=修改,15=删除,20=详情,25=状态,30=批量删除,35=添加子级,40=全部展开,45=全部折叠" value="isset($info['funcList'])?$info['funcList']:[]"}-->
+<!--			transfer 开始 -->
+			<div id="func" class="demo-transfer">
+				<div class="layui-transfer layui-form layui-border-box" lay-filter="LAY-transfer-1">
+					<div class="layui-transfer-box" data-index="0" style="width: 220px; height: 350px;">
+						<div class="layui-transfer-header">
+							<input type="checkbox" name="layTransferLeftCheckAll" lay-filter="layTransferCheckbox" lay-type="all" lay-skin="primary" title="全部节点">
+							<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+								<span>全部节点</span>
+								<i class="layui-icon layui-icon-ok"></i>
+							</div>
+						</div>
+						<ul class="layui-transfer-data" style="height: 310px;">
+							<li>
+								<input type="checkbox" name="layTransferLeftCheck" lay-skin="primary" lay-filter="layTransferCheckbox" title="列表" value="1">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+									<span>列表</span>
+									<i class="layui-icon layui-icon-ok"></i>
+								</div>
+							</li>
+							<li>
+								<input type="checkbox" name="layTransferLeftCheck" lay-skin="primary" lay-filter="layTransferCheckbox" title="添加" value="5">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+									<span>添加</span>
+									<i class="layui-icon layui-icon-ok"></i>
+								</div>
+							</li>
+							<li>
+								<input type="checkbox" name="layTransferLeftCheck" lay-skin="primary" lay-filter="layTransferCheckbox" title="修改" value="10">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+									<span>修改</span>
+									<i class="layui-icon layui-icon-ok"></i>
+								</div>
+							</li>
+							<li>
+								<input type="checkbox" name="layTransferLeftCheck" lay-skin="primary" lay-filter="layTransferCheckbox" title="删除" value="15">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+									<span>删除</span>
+									<i class="layui-icon layui-icon-ok"></i>
+								</div>
+							</li>
+							<li>
+								<input type="checkbox" name="layTransferLeftCheck" lay-skin="primary" lay-filter="layTransferCheckbox" title="详情" value="20">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+									<span>详情</span>
+									<i class="layui-icon layui-icon-ok"></i>
+								</div>
+							</li>
+							<li>
+								<input type="checkbox" name="layTransferLeftCheck" lay-skin="primary" lay-filter="layTransferCheckbox" title="状态" value="25">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+									<span>状态</span>
+									<i class="layui-icon layui-icon-ok"></i>
+								</div>
+							</li>
+							<li>
+								<input type="checkbox" name="layTransferLeftCheck" lay-skin="primary" lay-filter="layTransferCheckbox" title="批量删除" value="30">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+									<span>批量删除</span>
+									<i class="layui-icon layui-icon-ok"></i>
+								</div>
+							</li>
+							<li>
+								<input type="checkbox" name="layTransferLeftCheck" lay-skin="primary" lay-filter="layTransferCheckbox" title="添加子级" value="35">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+									<span>添加子级</span>
+									<i class="layui-icon layui-icon-ok"></i>
+								</div>
+							</li>
+							<li>
+								<input type="checkbox" name="layTransferLeftCheck" lay-skin="primary" lay-filter="layTransferCheckbox" title="全部展开" value="40">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+									<span>全部展开</span>
+									<i class="layui-icon layui-icon-ok"></i>
+								</div>
+							</li>
+							<li>
+								<input type="checkbox" name="layTransferLeftCheck" lay-skin="primary" lay-filter="layTransferCheckbox" title="全部折叠" value="45">
+								<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+									<span>全部折叠</span>
+									<i class="layui-icon layui-icon-ok"></i>
+								</div>
+							</li>
+						</ul>
+					</div>
+					<div class="layui-transfer-active">
+						<button type="button" class="layui-btn layui-btn-sm layui-btn-primary layui-btn-disabled" data-index="0">
+							<i class="layui-icon layui-icon-next"></i>
+						</button>
+						<button type="button" class="layui-btn layui-btn-sm layui-btn-primary layui-btn-disabled" data-index="1">
+							<i class="layui-icon layui-icon-prev"></i>
+						</button>
+					</div>
+					<div class="layui-transfer-box" data-index="1" style="width: 220px; height: 350px;">
+						<div class="layui-transfer-header">
+							<input type="checkbox" name="layTransferRightCheckAll" lay-filter="layTransferCheckbox" lay-type="all" lay-skin="primary" title="已赋予节点">
+							<div class="layui-unselect layui-form-checkbox" lay-skin="primary">
+								<span>已赋予节点</span>
+								<i class="layui-icon layui-icon-ok"></i>
+							</div>
+						</div>
+						<ul class="layui-transfer-data" style="height: 310px;">
+							<p class="layui-none">无数据</p></ul>
+					</div>
+				</div>
+			</div>
+			<script>
+				layui.use(['transfer'], function() {
+					var transfer = layui.transfer
+
+					//定义标题及数据源
+					transfer.render({
+						elem: "#func",
+						title: ['全部节点', '已赋予节点'] //自定义标题
+						,
+						showSearch: 0,
+						data: [{
+							"value": 1,
+							"title": "列表"
+						},
+							{
+								"value": 5,
+								"title": "添加"
+							},
+							{
+								"value": 10,
+								"title": "修改"
+							},
+							{
+								"value": 15,
+								"title": "删除"
+							},
+							{
+								"value": 20,
+								"title": "详情"
+							},
+							{
+								"value": 25,
+								"title": "状态"
+							},
+							{
+								"value": 30,
+								"title": "批量删除"
+							},
+							{
+								"value": 35,
+								"title": "添加子级"
+							},
+							{
+								"value": 40,
+								"title": "全部展开"
+							},
+							{
+								"value": 45,
+								"title": "全部折叠"
+							}],
+						id: 'func' //定义唯一索引
+						,
+						width: 220 //定义宽度
+						,
+						height: 350 //定义高度
+						,
+						value: [],
+						onchange: function(obj, index) {}
+					})
+
+				});
+			</script>
+<!--			transfer 结束 -->
+		</div>
+	</div>
+	<div class="layui-form-item layui-form-text" style="width:625px;">
+		<label class="layui-form-label">备注：</label>
+		<div class="layui-input-block">
+			<textarea name="note" placeholder="请输入备注" class="layui-textarea">{$info.note|default=''}</textarea>
+		</div>
+	</div>
+<!--	{widget:submit name="submit|立即保存,close|关闭" layFilter="submitForm2"}-->
+<!--	widget 开始 -->
+	<div class="layui-form-item text-center model-form-footer">
+		<button class="layui-btn" lay-filter="submitForm2" lay-submit="">立即保存</button>
+		<button class="layui-btn layui-btn-primary" type="button" ew-event="closeDialog">关闭</button>
+	</div>
+<!--	widget 结束 -->
+</form>
